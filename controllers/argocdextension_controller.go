@@ -22,10 +22,12 @@ import (
 	"os"
 
 	git "github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
+	log "github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/log"
+	k8slog "sigs.k8s.io/controller-runtime/pkg/log"
 
 	extensionv1 "github.com/argoproj/argocd-extensions/api/v1"
 )
@@ -36,31 +38,52 @@ type ArgoCDExtensionReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+func Clone(path string, repo string, revision string) (ctrl.Result, error) {
+	if _, err := git.PlainClone(path, false, &git.CloneOptions{
+		URL:           repo,
+		Progress:      os.Stdout,
+		ReferenceName: plumbing.ReferenceName(revision),
+	}); err != nil {
+		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
+	return ctrl.Result{}, nil
+}
+
 //+kubebuilder:rbac:groups=extension.argoproj.io,resources=argocdextensions,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=extension.argoproj.io,resources=argocdextensions/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=extension.argoproj.io,resources=argocdextensions/finalizers,verbs=update
-
-// Reconcile is part of the main kubernetes reconciliation loop which aims to
-// move the current state of the cluster closer to the desired state.
-// TODO(user): Modify the Reconcile function to compare the state specified by
-// the ArgoCDExtension object against the actual cluster state, and then
-// perform operations to make the cluster state reflect the state specified by
-// the user.
-//
-// For more details, check Reconcile and its Result here:
-// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.8.3/pkg/reconcile
 func (r *ArgoCDExtensionReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	_ = k8slog.FromContext(ctx)
 	var extension extensionv1.ArgoCDExtension
 	if err := r.Get(ctx, req.NamespacedName, &extension); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
-	if _, err := git.PlainClone(fmt.Sprintf("/tmp/extensions/%s", extension.ObjectMeta.Name), false, &git.CloneOptions{
-		URL:      extension.Spec.Repository,
-		Progress: os.Stdout,
-	}); err != nil {
-		return ctrl.Result{}, client.IgnoreNotFound(err)
+	path := fmt.Sprintf("/tmp/extensions/%s", extension.ObjectMeta.Name)
+	repo, err := git.PlainOpen(path)
+
+	cloneRepo := func() (ctrl.Result, error) {
+		res, err := Clone(path, extension.Spec.Repository, extension.Spec.Revision)
+		if err != nil {
+			log.Errorf("problem cloning repo %s", path)
+		}
+		return res, err
+	}
+
+	if err != nil {
+		log.Infof("Extension directory %s does not exist, cloning now", path)
+		return cloneRepo()
+	}
+
+	worktree, err := repo.Worktree()
+	if err != nil {
+		log.Infof("Could not open worktree for %s, cloning now", path)
+		return cloneRepo()
+	}
+
+	err = worktree.Pull(&git.PullOptions{RemoteName: "origin"})
+	if err != nil {
+		log.Errorf("problem pulling remote for repo %s: %s", path, err)
 	}
 
 	return ctrl.Result{}, nil
