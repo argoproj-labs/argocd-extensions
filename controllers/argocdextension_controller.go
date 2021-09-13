@@ -22,6 +22,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"syscall"
 
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -98,7 +99,8 @@ func (r *ArgoCDExtensionReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	}
 
 	if url := extension.Spec.Source.File; url != nil {
-		fullPath := fmt.Sprintf("%s/extension.js", path)
+		path = fmt.Sprintf("%s/ui", path)
+		fullPath := fmt.Sprintf("%s/extensions.js", path)
 
 		res, err := http.Get(*url)
 		if err != nil {
@@ -108,7 +110,8 @@ func (r *ArgoCDExtensionReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 
 		if _, err := os.Stat(fullPath); os.IsNotExist(err) {
 			log.Infof("Creating path %s", path)
-			os.MkdirAll(path, 0700)
+			syscall.Umask(0)
+			os.MkdirAll(path, 0755)
 		}
 
 		outfile, err := os.Create(fullPath)
