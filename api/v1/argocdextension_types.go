@@ -20,7 +20,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
 // ArgoCDExtensionSpec defines the desired state of ArgoCDExtension
@@ -28,10 +27,14 @@ type ArgoCDExtensionSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Repository specifies where the Extension code lives
-	Repository string `json:"repository,omitempty"`
-	// Revision specifies the revision of the Repository to fetch
-	Revision string `json:"revision,omitempty"`
+	// Extends specifies what part of Argo CD should be extended
+	Extends string `json:"extends,omitempty"`
+
+	// Source specifies where the extension should come from
+	Source ExtensionSource `json:"source"`
+
+	// Target specifies which K8S resource the extension should target
+	Target ExtensionTarget `json:"target,omitempty"`
 }
 
 // ArgoCDExtensionStatus defines the observed state of ArgoCDExtension
@@ -63,4 +66,31 @@ type ArgoCDExtensionList struct {
 
 func init() {
 	SchemeBuilder.Register(&ArgoCDExtension{}, &ArgoCDExtensionList{})
+}
+
+// ExtensionSource specifies where the extension should be sourced from
+type ExtensionSource struct {
+	// Repository is specified if the extension should be sourced from a git repository
+	Repository *RepositorySource `json:"repository,omitempty"`
+	// File is specified if the extension should be sourced from a URL
+	File *string `json:"file,omitempty"`
+}
+
+// RepositorySource specifies a repo that holds an extension
+type RepositorySource struct {
+	// Name specifies the name of the Repository to fetch
+	Url *string `json:"name,omitempty"`
+	// Revision specifies the revision of the Repository to fetch
+	Revision *string `json:"revision,omitempty"`
+}
+
+// ExtensionTarget specifies what the extension should target
+type ExtensionTarget struct {
+	// Resource specifies a K8S resource to target
+	Resource ResourceTarget `json:"resource,omitempty"`
+}
+
+type ResourceTarget struct {
+	Group string `json:"group,omitempty"`
+	Kind  string `json:"kind,omitempty"`
 }

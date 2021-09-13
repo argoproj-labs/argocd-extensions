@@ -19,6 +19,8 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 
 	git "github.com/go-git/go-git/v5"
@@ -39,6 +41,7 @@ type ArgoCDExtensionReconciler struct {
 }
 
 func Clone(path string, repo string, revision string) (ctrl.Result, error) {
+	log.Infof("Cloning into %s", path)
 	if _, err := git.PlainClone(path, false, &git.CloneOptions{
 		URL:           repo,
 		Progress:      os.Stdout,
@@ -59,31 +62,64 @@ func (r *ArgoCDExtensionReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
-	path := fmt.Sprintf("/tmp/extensions/%s", extension.ObjectMeta.Name)
-	repo, err := git.PlainOpen(path)
+	if extension.Spec.Extends != "ui" {
+		return ctrl.Result{}, nil
+	}
 
-	cloneRepo := func() (ctrl.Result, error) {
-		res, err := Clone(path, extension.Spec.Repository, extension.Spec.Revision)
-		if err != nil {
-			log.Errorf("problem cloning repo %s", path)
+	path := fmt.Sprintf("/tmp/extensions/%s/%s", extension.Spec.Target.Resource.Group, extension.Spec.Target.Resource.Kind)
+
+	if extension.Spec.Source.Repository != nil {
+		repoInfo := extension.Spec.Source.Repository
+		repo, err := git.PlainOpen(path)
+
+		cloneRepo := func() (ctrl.Result, error) {
+			res, err := Clone(path, *repoInfo.Url, *repoInfo.Revision)
+			if err != nil {
+				log.Errorf("problem cloning repo %s", path)
+			}
+			return res, err
 		}
-		return res, err
+
+		if err != nil {
+			log.Infof("Extension directory %s does not exist, cloning now", path)
+			return cloneRepo()
+		}
+
+		worktree, err := repo.Worktree()
+		if err != nil {
+			log.Infof("Could not open worktree for %s, cloning now", path)
+			return cloneRepo()
+		}
+
+		err = worktree.Pull(&git.PullOptions{RemoteName: "origin"})
+		if err != nil {
+			log.Errorf("problem pulling remote for repo %s: %s", path, err)
+		}
 	}
 
-	if err != nil {
-		log.Infof("Extension directory %s does not exist, cloning now", path)
-		return cloneRepo()
-	}
+	if url := extension.Spec.Source.File; url != nil {
+		fullPath := fmt.Sprintf("%s/extension.js", path)
 
-	worktree, err := repo.Worktree()
-	if err != nil {
-		log.Infof("Could not open worktree for %s, cloning now", path)
-		return cloneRepo()
-	}
+		res, err := http.Get(*url)
+		if err != nil {
+			log.Errorf("problem downloading file from url %s: %s", *url, err)
+		}
+		defer res.Body.Close()
 
-	err = worktree.Pull(&git.PullOptions{RemoteName: "origin"})
-	if err != nil {
-		log.Errorf("problem pulling remote for repo %s: %s", path, err)
+		if _, err := os.Stat(fullPath); os.IsNotExist(err) {
+			log.Infof("Creating path %s", path)
+			os.MkdirAll(path, 0700)
+		}
+
+		outfile, err := os.Create(fullPath)
+		if err != nil {
+			log.Errorf("problem creating output file %s: %s", path, err)
+		}
+		defer outfile.Close()
+		_, err = io.Copy(outfile, res.Body)
+		if err != nil {
+			log.Errorf("problem writing to output file %s: %s", path, err)
+		}
 	}
 
 	return ctrl.Result{}, nil

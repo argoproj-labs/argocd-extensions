@@ -36,13 +36,45 @@ spec:
           spec:
             description: ArgoCDExtensionSpec defines the desired state of ArgoCDExtension
             properties:
-              repository:
-                description: Repository specifies where the Extension code lives
+              extends:
+                description: Extends specifies what part of Argo CD should be extended
                 type: string
-              revision:
-                description: Revision specifies the revision of the Repository to
-                  fetch
-                type: string
+              source:
+                description: Source specifies where the extension should come from
+                properties:
+                  file:
+                    description: File is specified if the extension should be sourced
+                      from a URL
+                    type: string
+                  repository:
+                    description: Repository is specified if the extension should be
+                      sourced from a git repository
+                    properties:
+                      name:
+                        description: Name specifies the name of the Repository to
+                          fetch
+                        type: string
+                      revision:
+                        description: Revision specifies the revision of the Repository
+                          to fetch
+                        type: string
+                    type: object
+                type: object
+              target:
+                description: Target specifies which K8S resource the extension should
+                  target
+                properties:
+                  resource:
+                    description: Resource specifies a K8S resource to target
+                    properties:
+                      group:
+                        type: string
+                      kind:
+                        type: string
+                    type: object
+                type: object
+            required:
+            - source
             type: object
           status:
             description: ArgoCDExtensionStatus defines the observed state of ArgoCDExtension
