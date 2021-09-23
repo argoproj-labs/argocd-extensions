@@ -1,7 +1,0 @@
-apiVersion: extension.argoproj.io/v1
-kind: ArgoCDExtension
-metadata:
-  name: argocdextension-sample
-spec:
-  repository: https://github.com/rbreeze/rbreeze.github.io
-  revision: HEAD
