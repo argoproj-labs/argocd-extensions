@@ -130,6 +130,9 @@ func (c *extensionContext) ProcessDeletion() error {
 func (c *extensionContext) moveSourceFiles(revisions []string, tempDir string) (sourcesSnapshot, error) {
 	snapshot := sourcesSnapshot{Revisions: revisions}
 	if err := filepath.Walk(tempDir, func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
 		if info.IsDir() {
 			return nil
 		}
