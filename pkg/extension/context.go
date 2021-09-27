@@ -11,6 +11,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"sort"
 
 	k8slog "sigs.k8s.io/controller-runtime/pkg/log"
 
@@ -50,6 +51,9 @@ func (s *sourcesSnapshot) shouldDownload(revisions []string) string {
 func (s sourcesSnapshot) deleteFiles() error {
 	for i := range s.Files {
 		if err := os.Remove(s.Files[i]); err != nil {
+			if os.IsNotExist(err) {
+				continue
+			}
 			return err
 		}
 	}
@@ -212,6 +216,9 @@ func (c *extensionContext) resolveRevisions() ([]string, error) {
 			res = append(res, s.Web.Url)
 		}
 	}
+	sort.Slice(res, func(i, j int) bool {
+		return res[i] < res[j]
+	})
 	return res, nil
 }
 
