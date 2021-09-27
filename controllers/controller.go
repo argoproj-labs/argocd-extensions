@@ -10,7 +10,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	extensionv1 "github.com/argoproj/argocd-extensions/api/v1"
+	extensionv1 "github.com/argoproj/argocd-extensions/api/v1alpha1"
 	"github.com/argoproj/argocd-extensions/pkg/extension"
 )
 
@@ -34,8 +34,6 @@ func findIndex(in []string, item string) int {
 	return -1
 }
 
-//+kubebuilder:rbac:groups=extension.argoproj.io,resources=argocdextensions,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=extension.argoproj.io,resources=argocdextensions/finalizers,verbs=update
 func (r *ArgoCDExtensionReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	var original extensionv1.ArgoCDExtension
 	if err := r.Get(ctx, req.NamespacedName, &original); err != nil {

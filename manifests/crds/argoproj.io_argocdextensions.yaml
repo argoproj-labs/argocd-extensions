@@ -6,9 +6,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.4.1
   creationTimestamp: null
-  name: argocdextensions.extension.argoproj.io
+  name: argocdextensions.argoproj.io
 spec:
-  group: extension.argoproj.io
+  group: argoproj.io
   names:
     kind: ArgoCDExtension
     listKind: ArgoCDExtensionList
@@ -16,7 +16,7 @@ spec:
     singular: argocdextension
   scope: Namespaced
   versions:
-  - name: v1
+  - name: v1alpha1
     schema:
       openAPIV3Schema:
         description: ArgoCDExtension is the Schema for the argocdextensions API

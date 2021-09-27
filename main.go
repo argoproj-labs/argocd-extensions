@@ -18,7 +18,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	extensionv1 "github.com/argoproj/argocd-extensions/api/v1"
+	extensionv1 "github.com/argoproj/argocd-extensions/api/v1alpha1"
 	"github.com/argoproj/argocd-extensions/controllers"
 	//+kubebuilder:scaffold:imports
 )
@@ -36,10 +36,6 @@ func init() {
 }
 
 func main() {
-	var enableLeaderElection bool
-	flag.BoolVar(&enableLeaderElection, "leader-elect", false,
-		"Enable leader election for controller manager. "+
-			"Enabling this will ensure there is only one active controller manager.")
 	opts := zap.Options{
 		Development: true,
 	}
@@ -64,7 +60,7 @@ func main() {
 		Scheme:                 scheme,
 		Port:                   9443,
 		HealthProbeBindAddress: "0",
-		LeaderElection:         enableLeaderElection,
+		LeaderElection:         false,
 		MetricsBindAddress:     "0",
 		LeaderElectionID:       "632aad60.argoproj.io",
 		Namespace:              namespace,

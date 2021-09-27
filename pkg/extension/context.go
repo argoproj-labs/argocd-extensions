@@ -13,7 +13,7 @@ import (
 
 	k8slog "sigs.k8s.io/controller-runtime/pkg/log"
 
-	extensionv1 "github.com/argoproj/argocd-extensions/api/v1"
+	extensionv1 "github.com/argoproj/argocd-extensions/api/v1alpha1"
 	"github.com/argoproj/argocd-extensions/pkg/git"
 	"github.com/hashicorp/go-getter"
 )
