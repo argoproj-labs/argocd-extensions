@@ -1,3 +1,7 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argocd-server
 spec:
   template:
     spec:
@@ -7,8 +11,7 @@ spec:
             - name: extensions
               mountPath: /tmp/extensions/
         - name: argocd-extensions
-          image: rbreeze/argocd-extensions
-          imagePullPolicy: Always
+          image: ghcr.io/argoproj-labs/argocd-extensions:latest
           volumeMounts:
             - name: extensions
               mountPath: /tmp/extensions/
