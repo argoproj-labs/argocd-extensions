@@ -2,6 +2,10 @@ name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: Image tag
+        required: true
 
 jobs:
   test:
@@ -33,9 +37,6 @@ jobs:
       - 
         name: Checkout repo
         uses: actions/checkout@master
-      - 
-        name: Build image tag
-        run: echo "IMAGE_TAG=v$(cat ./VERSION)" >> $GITHUB_ENV 
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -57,7 +58,5 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm
           push: true
           tags: |
-            ghcr.io/argoproj-labs/argocd-extensions:${{ env.IMAGE_TAG }}
+            ghcr.io/argoproj-labs/argocd-extensions:${{ github.event.inputs.tag }}
           file: ./Dockerfile
-          build-args: |
-              IMAGE_TAG=${{ env.IMAGE_TAG }}

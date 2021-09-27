@@ -49,9 +49,6 @@ jobs:
       - 
         name: Checkout repo
         uses: actions/checkout@master
-      - 
-        name: Build image tag
-        run: echo "IMAGE_TAG=$(cat ./VERSION)-${GITHUB_SHA::8}" >> $GITHUB_ENV 
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -74,7 +71,4 @@ jobs:
           push: true
           tags: |
             ghcr.io/argoproj-labs/argocd-extensions:latest
-            ghcr.io/argoproj-labs/argocd-extensions:${{ env.IMAGE_TAG }}
           file: ./Dockerfile
-          build-args: |
-              IMAGE_TAG=${{ env.IMAGE_TAG }}
