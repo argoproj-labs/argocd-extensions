@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/fs"
 	"io/ioutil"
 	"net/url"
@@ -115,6 +116,7 @@ func (c *extensionContext) Process(ctx context.Context) error {
 		return fmt.Errorf("failed to persist snapshot: %v", err)
 	}
 
+	log.Info("Successfully downloaded all sources.")
 	return nil
 }
 
@@ -144,7 +146,7 @@ func (c *extensionContext) moveSourceFiles(revisions []string, tempDir string) (
 		if err := os.MkdirAll(filepath.Dir(targetPath), 0755); err != nil {
 			return err
 		}
-		if err := os.Rename(path, targetPath); err != nil {
+		if err := moveFile(path, targetPath); err != nil {
 			return err
 		}
 		snapshot.Files = append(snapshot.Files, targetPath)
@@ -211,4 +213,24 @@ func (c *extensionContext) resolveRevisions() ([]string, error) {
 		}
 	}
 	return res, nil
+}
+
+func moveFile(src string, dst string) error {
+	input, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	output, err := os.Create(dst)
+	if err != nil {
+		_ = input.Close()
+		return err
+	}
+	defer output.Close()
+	_, err = io.Copy(output, input)
+	_ = input.Close()
+	if err != nil {
+		return err
+	}
+
+	return os.Remove(src)
 }
