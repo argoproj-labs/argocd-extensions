@@ -24,3 +24,27 @@ This proposal would allow operators to more easily configure Argo CD to understa
 - Extensions can be configured by operators at runtime, without a feature being built directly into Argo CD, and with no need to recompile UI code.
 - Extensions should be easy to develop and install (via an `ArgoCDExtension` CR)
 - Replace current resource customizations in argocd-cm ConfigMap with extensions
+
+## Getting Started
+
+The simplest way to install the extension controller is to use Kustomize to bundle Argo CD
+and the extensions controller manifests together:
+
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+# base Argo CD components
+- https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/ha/install.yaml
+
+components:
+# extensions controller component
+- https://github.com/argoproj-labs/argocd-extensions/manifests
+```
+
+Store the YAML above into kustomization.yaml file and use the following command to install manifests:
+
+```bash
+kubectl create ns argocd && kustomize build . | kubectl apply -f - -n argocd
+```
