@@ -3,7 +3,6 @@ module github.com/argoproj/argocd-extensions
 go 1.16
 
 require (
-	github.com/googleapis/gnostic v0.5.5 // indirect
 	github.com/hashicorp/go-getter v1.6.2
 	golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
