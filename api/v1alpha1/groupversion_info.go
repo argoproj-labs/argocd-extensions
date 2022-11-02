@@ -1,6 +1,6 @@
 // Package v1alpha1 contains API Schema definitions for the extension v1alpha1 API group
-//+kubebuilder:object:generate=true
-//+groupName=argoproj.io
+// +kubebuilder:object:generate=true
+// +groupName=argoproj.io
 package v1alpha1
 
 import (
