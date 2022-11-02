@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"io/ioutil"
 	"net/url"
 	"os"
 	"path"
@@ -94,10 +93,7 @@ func (c *extensionContext) Process(ctx context.Context) error {
 	}
 
 	// download all extension files into temp directory
-	tempDir, err := ioutil.TempDir("", "")
-	if err != nil {
-		return fmt.Errorf("failed to create temp dir %v", err)
-	}
+	tempDir := os.TempDir()
 	defer func() {
 		if err := os.RemoveAll(tempDir); err != nil {
 			log.Error(err, "Failed to delete temp directory")
@@ -167,7 +163,7 @@ func (c *extensionContext) saveSnapshot(snapshot sourcesSnapshot) error {
 		return err
 	}
 
-	if err := ioutil.WriteFile(c.snapshotPath, data, 0755); err != nil {
+	if err := os.WriteFile(c.snapshotPath, data, 0755); err != nil {
 		return fmt.Errorf("failed to persist download sources revisions: %v", err)
 	}
 	return nil
@@ -175,7 +171,7 @@ func (c *extensionContext) saveSnapshot(snapshot sourcesSnapshot) error {
 
 func (c *extensionContext) loadSnapshot() sourcesSnapshot {
 	var prev sourcesSnapshot
-	if data, err := ioutil.ReadFile(c.snapshotPath); err == nil {
+	if data, err := os.ReadFile(c.snapshotPath); err == nil {
 		_ = json.Unmarshal(data, &prev)
 	}
 	return prev
