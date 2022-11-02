@@ -3,12 +3,14 @@ module github.com/argoproj/argocd-extensions
 go 1.19
 
 require (
-	github.com/hashicorp/go-getter v1.5.8
+	github.com/hashicorp/go-getter v1.6.2
 	gopkg.in/src-d/go-git.v4 v4.13.1
 	k8s.io/apimachinery v0.22.2
 	k8s.io/client-go v0.22.2
 	sigs.k8s.io/controller-runtime v0.10.1
 )
+
+replace gopkg.in/yaml.v3 => gopkg.in/yaml.v3 v3.0.1
 
 require (
 	cloud.google.com/go v0.54.0 // indirect
@@ -73,7 +75,7 @@ require (
 	golang.org/x/mod v0.4.2 // indirect
 	golang.org/x/net v0.0.0-20210520170846-37e1c6afe023 // indirect
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d // indirect
-	golang.org/x/sys v0.0.0-20210817190340-bfb29a6856f2 // indirect
+	golang.org/x/sys v0.0.0-20220517195934-5e4e11fc645e // indirect
 	golang.org/x/term v0.0.0-20210220032956-6a3ed077a48d // indirect
 	golang.org/x/text v0.3.6 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
