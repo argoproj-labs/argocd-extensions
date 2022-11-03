@@ -9,4 +9,4 @@ components:
 
 images:
 - name: ghcr.io/argoproj-labs/argocd-extensions
-  newTag: v0.2.0
+  newTag: v0.2.1
