@@ -95,7 +95,7 @@ func (c *extensionContext) Process(ctx context.Context) error {
 	// download all extension files into temp directory
 	tempDir, err := os.MkdirTemp("", "")
 	if err != nil {
-		return fmt.Errorf("failed to create temp dir %v", err)
+		return fmt.Errorf("failed to create temp dir %w", err)
 	}
 	defer func() {
 		if err := os.RemoveAll(tempDir); err != nil {
