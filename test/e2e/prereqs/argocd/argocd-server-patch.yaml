@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: argocd-server
+    app.kubernetes.io/part-of: argocd
+  name: argocd-server
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - command:
+          - argocd-server
+          name: argocd-server
+          volumeMounts:
+            - name: extensions
+              mountPath: /tmp/extensions/
+        - name: argocd-extentions
+          image: localhost:5001/argocd-extensions:test-image
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: extensions
+              mountPath: /tmp/extensions/
+            - name: ssh-known-hosts
+              mountPath: /app/config/ssh
+      volumes:
+        - name: extensions
+          emptyDir: {}

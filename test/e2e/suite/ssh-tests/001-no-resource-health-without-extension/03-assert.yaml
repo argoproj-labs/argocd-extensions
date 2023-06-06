@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-extentions-create-001
+  namespace: argocd-extentions-e2e
+status:
+  health:
+    status: Healthy
+  resources:
+  - group: test.nocustomhealthcheck.com
+    kind: TestResource
+    name: blue
+    namespace: argocd-extentions-e2e-001
+    status: Synced
+    version: v1alpha1
+  sync:
+    status: Synced

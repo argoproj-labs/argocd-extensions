@@ -1,0 +1,10 @@
+apiVersion: "test.red.resource.com/v1alpha1"
+kind: TestResource
+metadata:
+  name: red
+spec:
+  propertyA: test-property-a
+  propertyB: test-property-b
+  propertyC: test-property-c
+status:  
+  color: red

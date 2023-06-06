@@ -1,0 +1,21 @@
+[
+	{
+		"op": "add",
+		"path": "/rules/-",
+		"value": {
+      "apiGroups": [
+        "argoproj.io"
+      ],
+      "resources": [
+        "applications",
+        "argocdextensions"
+      ],
+      "verbs": [
+        "get",
+        "list",
+        "watch",
+        "update"
+      ]
+    }
+	}
+]

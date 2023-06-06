@@ -1,0 +1,65 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata: 
+  name: testresources.test.nocustomhealthcheck.com
+spec:
+  group: test.nocustomhealthcheck.com
+  names:
+    kind: TestResource
+    listKind: TestResourceList
+    plural: testresources
+    singular: testresource
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: TestResource is the Schema for the nresources API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: TestResourceSpec defines the desired state of TestResource
+            properties:
+              propertyA:
+                description: Some property
+                type: string
+              propertyB:
+                description: Some other property
+                type: string
+              propertyC:
+                description: Yet another property
+                type: string
+            required:
+            - propertyA
+            - propertyB
+            - propertyC
+            type: object
+          status:
+            description: TestResourceStatus defines the observed state of TestResource
+            properties:
+              color:
+                description: The status color
+                type: string
+            required:
+            - color
+            type: object
+        type: object
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

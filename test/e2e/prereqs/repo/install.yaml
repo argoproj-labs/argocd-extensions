@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: e2e-git-repository
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: repository
+      component: argocd-extentions-e2e
+  template:
+    metadata:
+      labels:
+        app: repository
+        component: argocd-extentions-e2e
+    spec:
+      containers:
+      - name: git-http
+        image: localhost:5001/git-http:latest
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 8080
+          - containerPort: 8081
+          - containerPort: 2222
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: e2e-git-repository
+spec:
+  type: NodePort
+  selector:
+    app: repository
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30002
+      name: unauth
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+      nodePort: 30003
+      name: auth
+    - protocol: TCP
+      port: 2222
+      targetPort: 22
+      nodePort: 30004
+      name: ssh

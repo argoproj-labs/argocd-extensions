@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-extentions-create-003
+  namespace: argocd-extentions-e2e
+status:
+  health:
+    status: Progressing
+  resources:
+  - group: test.customhealthcheck.com
+    health:
+      message: Waiting
+      status: Progressing
+    kind: TestResource
+    name: green
+    namespace: argocd-extentions-e2e-003
+    status: Synced
+    version: v1alpha1
+  sync:
+    status: Synced

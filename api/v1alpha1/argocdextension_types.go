@@ -8,6 +8,8 @@ import (
 type ArgoCDExtensionSpec struct {
 	// Sources specifies where the extension should come from
 	Sources []ExtensionSource `json:"sources"`
+	// BaseDirectory specifies the directory that all resource customizations are stored under
+	BaseDirectory string `json:"baseDirectory"`
 }
 
 type ArgoCDExtensionConditionType string
@@ -68,10 +70,20 @@ type GitSource struct {
 	Url string `json:"url,omitempty"`
 	// Revision specifies the revision of the Repository to fetch
 	Revision string `json:"revision,omitempty"`
+	// Secret specifies the Kubernetes secret to use when authenticating with GitHub
+	Secret *NamespacedName `json:"secret,omitempty"`
 }
 
 // WebSource specifies a repo that holds an extension
 type WebSource struct {
 	// URK specifies the remote file URL
 	Url string `json:"url,omitempty"`
+}
+
+// NamespacedName specifies a Kubernetes resource by its namespace and name
+type NamespacedName struct {
+	// Namespace specifies the namespace of the Kubernetes resource
+	Namespace string `json:"namespace"`
+	// Name specifies the name of the Kubernetes resource
+	Name string `json:"name"`
 }

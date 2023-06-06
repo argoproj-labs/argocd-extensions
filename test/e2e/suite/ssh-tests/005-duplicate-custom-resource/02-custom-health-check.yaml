@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ArgoCDExtension
+metadata:
+  name: test-argocd-extension
+  namespace: argocd-extentions-e2e
+spec:
+  baseDirectory: resource_customizations
+  sources:
+    - git:
+        url: ssh://git@10.96.169.143:2222/var/lib/git/testdata.git
+        revision: HEAD
+        secret:
+          name: e2e-git-repo
+          namespace: argocd-extentions-e2e

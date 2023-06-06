@@ -1,0 +1,10 @@
+apiVersion: "test.nocustomhealthcheck.com/v1alpha1"
+kind: TestResource
+metadata:
+  name: blue
+spec:
+  propertyA: test-property-a
+  propertyB: test-property-b
+  propertyC: test-property-c
+status:  
+  color: blue

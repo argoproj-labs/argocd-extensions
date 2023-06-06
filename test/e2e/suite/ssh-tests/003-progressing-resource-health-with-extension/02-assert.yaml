@@ -1,0 +1,14 @@
+apiVersion: kuttl.dev/v1beta1
+kind: TestAssert
+timeout: 60
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ArgoCDExtension
+metadata:
+  name: test-argocd-extension
+  namespace: argocd-extentions-e2e
+status:
+  conditions:
+  - message: Successfully processed 1 extension sources
+    status: '"True"'
+    type: Ready
