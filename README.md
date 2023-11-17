@@ -53,7 +53,7 @@ resources:
 
 components:
 # extensions controller component
-- https://github.com/argoproj-labs/argocd-extensions/manifests
+- https://github.com/argoproj-labs/argocd-extensions//manifests
 ```
 
 Store the YAML above into kustomization.yaml file and use the following command to install manifests:
