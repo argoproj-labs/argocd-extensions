@@ -5,11 +5,11 @@ current alternative for installing Argo CD extensions is by defining
 an init-container in the Argo CD API server using the
 argocd-extension-installer image provided by the following repo:
 
-https://github.com/argoproj-labs/argocd-extension-installer
+* https://github.com/argoproj-labs/argocd-extension-installer
 
 This is an example about how to use it:
 
-https://github.com/argoproj-labs/argocd-extension-metrics#install-ui-extension
+* https://github.com/argoproj-labs/argocd-extension-metrics#install-ui-extension
 
 # Argo CD Extensions
 
