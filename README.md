@@ -1,4 +1,4 @@
-# Deprecation notice
+# Deprecation Notice
 
 This repo is now deprecated and no further changes will be made. The
 current alternative for installing Argo CD extensions is by defining
