@@ -1,0 +1,11 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ArgoCDExtension
+metadata:
+  name: test-argocd-extension-duplicate
+  namespace: argocd-extentions-e2e
+status:
+  conditions:
+  - message: file "/tmp/extensions/resources/test.customhealthcheck.com/TestResource/health.lua"
+      is already owned by "test-argocd-extension"
+    status: '"False"'
+    type: Ready

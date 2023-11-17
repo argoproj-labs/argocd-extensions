@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-extentions-create-004
+  namespace: argocd-extentions-e2e
+status:
+  health:
+    status: Healthy
+  resources:
+  - group: test.green.resource.com
+    health:
+      message: Healthy
+      status: Healthy
+    kind: TestResource
+    name: green
+    namespace: argocd-extentions-e2e-004
+    status: Synced
+    version: v1alpha1
+  - group: test.red.resource.com
+    health:
+      message: Healthy
+      status: Healthy
+    kind: TestResource
+    name: red
+    namespace: argocd-extentions-e2e-004
+    status: Synced
+    version: v1alpha1
+  sync:
+    status: Synced

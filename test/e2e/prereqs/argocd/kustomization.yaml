@@ -1,0 +1,29 @@
+resources:
+  - https://github.com/argoproj/argo-cd/manifests/cluster-install?ref=v2.4.12
+  - repository.yaml
+  - ../../../../manifests/crds
+
+patchesStrategicMerge:
+  - argocd-server-patch.yaml
+
+patches:
+  - path: clusterrolebinding-patch.yaml
+    target:
+      group: rbac.authorization.k8s.io
+      version: v1
+      kind: ClusterRoleBinding
+      name: argocd-application-controller
+  
+  - path: clusterrolebinding-patch.yaml
+    target:
+      group: rbac.authorization.k8s.io
+      version: v1
+      kind: ClusterRoleBinding
+      name: argocd-server
+  
+  - path: argocd-clusterrole-patch.yaml
+    target:
+      group: rbac.authorization.k8s.io
+      version: v1
+      kind: ClusterRole
+      name: argocd-server

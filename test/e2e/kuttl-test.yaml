@@ -1,0 +1,14 @@
+apiVersion: kuttl.dev/v1beta1
+kind: TestSuite
+name: argocd-extentions-e2e
+testDirs:
+  - ./suite/ssh-tests
+suppress:
+  - events
+timeout: 30
+parallel: 1
+reportFormat: JSON
+reportName: argocd-extentions-e2e
+skipDelete: false
+crdDir: ./assets/crds
+artifactsDir: ./kuttl-output

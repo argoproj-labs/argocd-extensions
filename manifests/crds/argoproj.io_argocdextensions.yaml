@@ -36,6 +36,10 @@ spec:
           spec:
             description: ArgoCDExtensionSpec defines the desired state of ArgoCDExtension
             properties:
+              baseDirectory:
+                description: BaseDirectory specifies the directory that all resource
+                  customizations are stored under
+                type: string            
               sources:
                 description: Sources specifies where the extension should come from
                 items:
@@ -50,21 +54,41 @@ spec:
                           description: Revision specifies the revision of the Repository
                             to fetch
                           type: string
+                        secret:
+                          description: Secret specifies the Kubernetes secret to use
+                            when authenticating with GitHub
+                          properties:
+                            name:
+                              description: Name specifies the name of the Kubernetes
+                                resource
+                              type: string
+                            namespace:
+                              description: Namespace specifies the namespace of the
+                                Kubernetes resource
+                              type: string
+                          required:
+                          - name
+                          - namespace
+                          type: object                          
                         url:
                           description: URL specifies the Git repository URL to fetch
                           type: string
+                      required:
+                      - url
+                      - revision
                       type: object
                     web:
                       description: Web is specified if the extension should be sourced
                         from a web file
                       properties:
                         url:
-                          description: URK specifies the remote file URL
+                          description: URL specifies the remote file URL
                           type: string
                       type: object
                   type: object
                 type: array
             required:
+            - baseDirectory            
             - sources
             type: object
           status:

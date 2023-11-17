@@ -19,8 +19,14 @@ FROM alpine:latest
 
 RUN apk update && apk upgrade && apk add git openssh-client
 
+# support for mounting configuration from a configmap
+WORKDIR /app/config/ssh
+RUN touch ssh_known_hosts && \
+    ln -s /app/config/ssh/ssh_known_hosts /etc/ssh/ssh_known_hosts
+
 WORKDIR /
 COPY --from=builder /workspace/manager .
+RUN adduser --disabled-password -u 65532 main 65532
 USER 65532:65532
 
 ENTRYPOINT ["/manager"]
